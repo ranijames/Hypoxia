@@ -1,2 +1,2 @@
-The scripts are esily runable command line R scripts for finding hypoxia score/pathway score, bayes factor, 
+The scripts are easily runable command line R scripts for finding hypoxia score/pathway score, bayes factor, 
 and plotting the density and histogram of pathway score using ggplot based on useser requested sample ID
