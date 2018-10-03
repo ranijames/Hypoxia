@@ -2,7 +2,7 @@
 suppressWarnings(suppressMessages(library(data.table)))
 suppressWarnings(suppressMessages(library(dplyr)))
 suppressWarnings(suppressMessages(library(ggplot2)))
-# The script can be executed as: Rscript pathway_score.R ../data/sample_input.tsv "cancertype of interest" " sample of interest" ouputdir
+# The script can be executed as: Rscript pathway_score.R ../data/sample_input.tsv "cancertype of interest" " sample of interest"
 # The gene expression matrix is called #
 # The duplicated samples or removed here
 args             = commandArgs(TRUE)
@@ -10,7 +10,9 @@ Gene_expression  = read.table(args[1], sep="\t",header=TRUE,check.names=FALSE)
 cancertype       = as.character(args[2])
 string           = as.character(args[3])
 results_dir      = args[4]
+# print(cancertype)
 # Output directory
+#results_dir     = "/Users/alvajames/Mount_projects/Results/"
 expected_output  = paste(results_dir, cancertype,".tsv", sep="")
 outfile          = paste(results_dir, cancertype,".pdf", sep="")
 
@@ -105,7 +107,6 @@ Pathway_score_SCKM = merge(SCKM[,1:2],Pathway_score,on="sample_id")
   
   plotter <- function(Cancer, Normal, Bayes_score, string){
     if (nrow(Bayes_score[which(Bayes_score$sample_id==string),])!=0) {
-      print("Error Matching Gene ids")
       mylabel      = paste('Bayes factor =',Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor)
       pathlabel    = paste('Pathway score =',Bayes_score[which(Bayes_score$sample_id==string),]$pathway_score)
       sample_label = paste('Sample =',string)
@@ -117,7 +118,7 @@ Pathway_score_SCKM = merge(SCKM[,1:2],Pathway_score,on="sample_id")
                    linetype="dotted", color = "black", size=0.5)+
         geom_text(aes(x=Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor,
                       label=paste(mylabel,sep="\n",
-                                  pathlabel, sample_label),y=1,hjust = 1.2), colour="black",hjust = -0.12,vjust=0.8) + 
+                                  pathlabel, sample_label),y=max(Normal$pathway_score),hjust = 1,vjust=20), colour="black",hjust = -0.025,vjust=0.01) + 
         ggtitle("Hypoxia score distribution in", cancertype)
       
       #################### histogram ###############
@@ -129,7 +130,7 @@ Pathway_score_SCKM = merge(SCKM[,1:2],Pathway_score,on="sample_id")
                    linetype="dotted", color = "black", size=0.5) +
         geom_text(aes(x=Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor, 
                       label=paste(mylabel,sep="\n",pathlabel, sample_label), y = max(Normal$pathway_score), hjust = 1, vjust = 20),
-                  colour="black",hjust = -0.025,vjust=-10.1) + ggtitle("Hypoxia score distribution in", cancertype)
+                  colour="black",hjust = -0.025,vjust=-9) + ggtitle("Hypoxia score distribution in", cancertype)
       pdf(outfile)
       print(p1)
       print(p2)
@@ -140,3 +141,5 @@ Pathway_score_SCKM = merge(SCKM[,1:2],Pathway_score,on="sample_id")
   }
 
   plotter(Cancer, Normal, Bayes_score, string)
+  
+
