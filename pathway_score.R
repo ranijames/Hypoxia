@@ -2,7 +2,7 @@
 suppressWarnings(suppressMessages(library(data.table)))
 suppressWarnings(suppressMessages(library(dplyr)))
 suppressWarnings(suppressMessages(library(ggplot2)))
-# The script can be executed as: Rscript pathway_score.R ../data/sample_input.tsv "cancertype of interest" " sample of interest"
+# The script can be executed as: Rscript pathway_score.R ../data/sample_input.tsv "cancertype of interest" " sample of interest" ouputdir
 # The gene expression matrix is called #
 # The duplicated samples or removed here
 args             = commandArgs(TRUE)
