@@ -140,5 +140,3 @@ Pathway_score_SCKM = merge(SCKM[,1:2],Pathway_score,on="sample_id")
   }
 
   plotter(Cancer, Normal, Bayes_score, string)
-  
-
