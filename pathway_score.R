@@ -7,15 +7,15 @@ suppressWarnings(suppressMessages(library(ggplot2)))
 # The duplicated samples or removed here
 args             = commandArgs(TRUE)
 Gene_expression  = read.table(args[1], sep="\t",header=TRUE,check.names=FALSE)
-#print(string)
 cancertype       = as.character(args[2])
 string           = as.character(args[3])
-
-#print(cancertype)
+results_dir      = args[4]
+# print(cancertype)
 # Output directory
-results_dir      = "/Users/alvajames/Mount_projects/Results/"
-expected_output  = paste(results_dir, "sample_output.tsv", sep="")
-outfile          = paste(results_dir, "sample_pathway_bayes_core.pdf", sep="")
+#results_dir     = "/Users/alvajames/Mount_projects/Results/"
+expected_output  = paste(results_dir, cancertype,".tsv", sep="")
+outfile          = paste(results_dir, cancertype,".pdf", sep="")
+
 
 # The gene weight is called here #
 Gene_weights               = read.table("/Users/alvajames/Mount_projects/data/gene_weights.tsv", header=TRUE, sep="\t",check.names=FALSE)
@@ -107,35 +107,38 @@ Pathway_score_SCKM = merge(SCKM[,1:2],Pathway_score,on="sample_id")
   
   plotter <- function(Cancer, Normal, Bayes_score, string){
     if (nrow(Bayes_score[which(Bayes_score$sample_id==string),])!=0) {
+      print("Error Matching Gene ids")
       mylabel      = paste('Bayes factor =',Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor)
       pathlabel    = paste('Pathway score =',Bayes_score[which(Bayes_score$sample_id==string),]$pathway_score)
       sample_label = paste('Sample =',string)
       p1 = ggplot(data = Normal, aes(x=pathway_score,fill = "blue")) + 
         geom_density(alpha=0.6) + 
         geom_density(data = Cancer, aes(x=pathway_score,fill = "green"),alpha=0.6) + 
-        scale_fill_manual(labels = c("bg0", "bg1"), values = c("blue", "#f45c42")) +
+        scale_fill_manual(labels = c("Normal", "Cancer"), values = c("blue", "#f45c42")) +
         geom_vline(xintercept = Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor, 
                    linetype="dotted", color = "black", size=0.5)+
         geom_text(aes(x=Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor,
                       label=paste(mylabel,sep="\n",
                                   pathlabel, sample_label),y=1,hjust = 1.2), colour="black",hjust = -0.12,vjust=0.8) + 
-        ggtitle("Plot of pathway score distribution")
+        ggtitle("Hypoxia score distribution in", cancertype)
       
       #################### histogram ###############
       p2 = ggplot(data = Normal, aes(x=pathway_score,fill = "blue")) + 
         geom_histogram(alpha=0.6,binwidth =0.2,bins=70) + 
         geom_histogram(data = Cancer, aes(x=pathway_score,fill = "green"),alpha=0.6,binwidth =0.2,bins=70) + 
-        scale_fill_manual(labels = c("bg0", "bg1"), values = c("blue", "#f45c42")) +
+        scale_fill_manual(labels = c("Normal", "Cancer"), values = c("blue", "#f45c42")) +
         geom_vline(xintercept = Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor, 
                    linetype="dotted", color = "black", size=0.5) +
         geom_text(aes(x=Bayes_score[which(Bayes_score$sample_id==string),]$bayes_factor, 
                       label=paste(mylabel,sep="\n",pathlabel, sample_label), y = max(Normal$pathway_score), hjust = 1, vjust = 20),
-                  colour="black",hjust = -0.025,vjust=-10.1) 
+                  colour="black",hjust = -0.025,vjust=-10.1) + ggtitle("Hypoxia score distribution in", cancertype)
       pdf(outfile)
       print(p1)
       print(p2)
       dev.off() 
     }
+    else
+      print("Error: The sample Id not found within the serached cancer type !")
   }
 
   plotter(Cancer, Normal, Bayes_score, string)
