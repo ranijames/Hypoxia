@@ -10,9 +10,7 @@ Gene_expression  = read.table(args[1], sep="\t",header=TRUE,check.names=FALSE)
 cancertype       = as.character(args[2])
 string           = as.character(args[3])
 results_dir      = args[4]
-# print(cancertype)
 # Output directory
-#results_dir     = "/Users/alvajames/Mount_projects/Results/"
 expected_output  = paste(results_dir, cancertype,".tsv", sep="")
 outfile          = paste(results_dir, cancertype,".pdf", sep="")
 
